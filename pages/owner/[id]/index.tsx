@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../../../lib/session";
 import NextLink from "next/link";
 import {
   Button,
-  Box,
   Text,
   TableContainer,
   Thead,
@@ -13,52 +11,22 @@ import {
   Td,
   Table,
   Tbody,
+  HStack,
+  Spacer,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Layout from "../../../components/Layout";
-import { useGlobalState } from "../../../context";
-import supabase from "../../../lib/supabase";
 import { BsFillTrashFill, BsArrowUpRight } from "react-icons/bs";
+import { useVenues } from "../../../hooks/useVenues";
+import VenueDrawer from "../../../components/VenueDrawer";
+import { useGlobalState } from "../../../context";
 
 export default function Owner() {
-  const [isLoadingData, setIsLoadingData] = useState(false);
   const router = useRouter();
-  const { setOwnerData, ownerData, venues, setVenues, nfcs, setNfcs } =
-    useGlobalState();
-  const userId = router.query.id;
+  const userId = router.query.id as string;
+  const { setIsVenueDrawerOpen, setActiveVenueId } = useGlobalState();
 
-  async function fetchOwnerData() {
-    try {
-      setIsLoadingData(true);
-
-      //fech owner
-      const { data: owner, error } = await supabase
-        .from("owners")
-        .select()
-        .match({ user_id: userId })
-        .single();
-      if (error) throw Error(error.message);
-      setOwnerData(owner);
-
-      //fech venues
-      const { data: venuesData, error: venueError } = await supabase
-        .from("venues")
-        .select()
-        .match({ owner_id: owner.user_id });
-      if (venueError) throw Error(venueError.message);
-      setVenues(venuesData);
-
-
-      setIsLoadingData(false);
-    } catch (e) {
-      console.log(e);
-      setIsLoadingData(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchOwnerData();
-  }, []);
+  const { isLoading, venues, ownerData, deleteVenue } = useVenues(userId);
 
   return (
     <Layout>
@@ -77,19 +45,40 @@ export default function Owner() {
         <strong>Company: </strong>
         {ownerData?.company_name}
       </Text>
+      {ownerData?.phone && (
+        <Text>
+          <strong>Phone: </strong>
+          {ownerData?.phone}
+        </Text>
+      )}
       <NextLink href={`/owner/${userId}/nfcs`}>
-        <Button>View NFC's</Button>
+        <Button colorScheme="blue" mt="10px">
+          View NFC's
+        </Button>
       </NextLink>
 
-      <Text fontWeight="bold" mt="20px">
-        Venues:{" "}
-      </Text>
+      <HStack>
+        <Text fontWeight="bold" mt="20px">
+          Venues:{" "}
+        </Text>
+        <Spacer />
+        <Button
+          onClick={() => {
+            setActiveVenueId(null);
+            setIsVenueDrawerOpen(true);
+          }}
+          size="sm"
+          colorScheme="blue"
+        >
+          ADD
+        </Button>
+      </HStack>
       <TableContainer w="full">
         <Table variant="striped" size="sm" colorScheme="gray">
           <Thead>
             <Tr>
               <Th>Ttile</Th>
-              <Th>Description</Th>
+              <Th>Phone</Th>
               <Th>Website</Th>
               <Th w="100px"></Th>
             </Tr>
@@ -97,14 +86,30 @@ export default function Owner() {
           <Tbody>
             {venues.map((venue) => (
               <Tr cursor="pointer" key={venue.id}>
-                <Td _hover={{ textDecoration: "underline" }}>{venue.title}</Td>
-                <Td>{venue.description}</Td>
+                <Td
+                  onClick={() => {
+                    if (!venue.id) return;
+                    setActiveVenueId(venue.id);
+                    setIsVenueDrawerOpen(true);
+                  }}
+                  _hover={{ textDecoration: "underline" }}
+                >
+                  {venue.title}
+                </Td>
+                <Td>{venue.phone}</Td>
                 <Td>{venue.website}</Td>
                 <Td>
-                  <Button colorScheme="blue" mr="10px">
-                    <BsArrowUpRight />
-                  </Button>
-                  <Button colorScheme="red">
+                  <Button
+                    onClick={() => {
+                      if (!venue?.id) return;
+                      const r = window.confirm(
+                        "Sure you want to delete this venue?"
+                      );
+                      if (!r) return;
+                      deleteVenue(venue.id);
+                    }}
+                    colorScheme="red"
+                  >
                     <BsFillTrashFill />
                   </Button>
                 </Td>
@@ -113,6 +118,7 @@ export default function Owner() {
           </Tbody>
         </Table>
       </TableContainer>
+      <VenueDrawer />
     </Layout>
   );
 }

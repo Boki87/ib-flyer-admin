@@ -18,6 +18,10 @@ interface IGloablContext {
 
   venues: Venue[];
   setVenues: (arr: Venue[]) => void;
+  isVenueDrawerOpen: boolean;
+  setIsVenueDrawerOpen: (val: boolean) => void;
+  activeVenueId: string | null;
+  setActiveVenueId: (val: string | null) => void;
 
   nfcs: NFC[];
   setNfcs: (arr: NFC[]) => void;
@@ -36,6 +40,10 @@ const initialState: IGloablContext = {
   setOwnerData: () => {},
   venues: [],
   setVenues: () => {},
+  isVenueDrawerOpen: false,
+  setIsVenueDrawerOpen: () => {},
+  activeVenueId: null,
+  setActiveVenueId: () => {},
   nfcs: [],
   setNfcs: () => {},
 };
@@ -52,6 +60,9 @@ export default function CombinedContext({ children }: { children: ReactNode }) {
   const [ownerData, setOwnerData] = useState<Owner | null>(null);
 
   const [venues, setVenues] = useState<Venue[]>([]);
+  const [isVenueDrawerOpen, setIsVenueDrawerOpen] = useState(false);
+  const [activeVenueId, setActiveVenueId] = useState<string | null>(null);
+
   const [nfcs, setNfcs] = useState<NFC[]>([]);
 
   return (
@@ -69,6 +80,10 @@ export default function CombinedContext({ children }: { children: ReactNode }) {
         setOwnerData,
         venues,
         setVenues,
+        activeVenueId,
+        setActiveVenueId,
+        isVenueDrawerOpen,
+        setIsVenueDrawerOpen,
         nfcs,
         setNfcs,
       }}

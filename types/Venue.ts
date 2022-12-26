@@ -7,5 +7,6 @@ export type Venue = {
   logo?: string;
   background_image?: string;
   background_color?: string;
+  phone?: string;
   created_at?: string;
 };

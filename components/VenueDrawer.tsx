@@ -16,40 +16,57 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useGlobalState } from "../context";
-import { useOwner } from "../hooks/useOwner";
+import { useVenues } from "../hooks/useVenues";
 
-export default function OwnerDrawer() {
+export default function VenueDrawer() {
   const {
-    activeOwnerId: ownerId,
-    setActiveOwnerId,
-    setIsOwnerDrawerOpen,
-    isOwnerDrawerOpen: isOpen,
-    loadingOwners,
+    isVenueDrawerOpen: isOpen,
+    setActiveVenueId,
+    setIsVenueDrawerOpen,
+    activeVenueId: venueId,
   } = useGlobalState();
-
-  const { ownerData, addNewOwner, updateOwner, setOwnerData, isLoading } =
-    useOwner();
+  const {
+    isLoading,
+    loadingVenue,
+    fetchVenue,
+    venueData,
+    setVenueData,
+    addVenue,
+    updateVenue,
+  } = useVenues();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!ownerId) {
-      await addNewOwner();
+    if (!venueId) {
+      //add venue
+      await addVenue();
       onClose();
     } else {
-      await updateOwner();
+      //update venue
+      await updateVenue();
       onClose();
     }
   }
 
   function onClose() {
-    setActiveOwnerId(null);
-    setIsOwnerDrawerOpen(false);
+    setActiveVenueId(null);
+    setIsVenueDrawerOpen(false);
   }
 
-  function updateOwnerState(e: SyntheticEvent) {
+  function updateVenueState(e: SyntheticEvent) {
     const input = e.target as HTMLInputElement;
-    setOwnerData({ ...ownerData, [input.name]: input.value });
+    setVenueData({ ...venueData, [input.name]: input.value });
   }
+
+  useEffect(() => {
+    if (venueId) {
+      fetchVenue(venueId);
+    } else {
+      setVenueData({
+        title: "",
+      });
+    }
+  }, [venueId]);
 
   return (
     <>
@@ -58,9 +75,9 @@ export default function OwnerDrawer() {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
-            {ownerId ? "Update Owner" : "Add new Owner"}
+            {venueId ? "Update Venue" : "Add new Venue"}
           </DrawerHeader>
-          {loadingOwners ? (
+          {loadingVenue ? (
             <Center>
               <Spinner />
             </Center>
@@ -68,40 +85,27 @@ export default function OwnerDrawer() {
             <form onSubmit={handleSubmit}>
               <DrawerBody>
                 <FormControl mb="10px">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <InputGroup>
                     <Input
                       required
-                      name="email"
-                      type="email"
-                      placeholder="email address"
-                      disabled={!!ownerId}
-                      onInput={updateOwnerState}
-                      value={ownerData.email}
+                      name="title"
+                      type="text"
+                      placeholder="Title"
+                      onInput={updateVenueState}
+                      value={venueData?.title}
                     />
                   </InputGroup>
                 </FormControl>
                 <FormControl mb="10px">
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>Website</FormLabel>
                   <InputGroup>
                     <Input
-                      name="full_name"
+                      name="website"
                       type="text"
-                      placeholder="John Doe"
-                      onInput={updateOwnerState}
-                      value={ownerData.full_name}
-                    />
-                  </InputGroup>
-                </FormControl>
-                <FormControl mb="10px">
-                  <FormLabel>Company Name</FormLabel>
-                  <InputGroup>
-                    <Input
-                      name="company_name"
-                      type="text"
-                      placeholder="Company Ltd"
-                      onInput={updateOwnerState}
-                      value={ownerData.company_name}
+                      placeholder="www.website.com"
+                      onInput={updateVenueState}
+                      value={venueData?.website}
                     />
                   </InputGroup>
                 </FormControl>
@@ -112,8 +116,8 @@ export default function OwnerDrawer() {
                       name="phone"
                       type="text"
                       placeholder="000 000 000"
-                      onInput={updateOwnerState}
-                      value={ownerData.phone}
+                      onInput={updateVenueState}
+                      value={venueData?.phone}
                     />
                   </InputGroup>
                 </FormControl>
