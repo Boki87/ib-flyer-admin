@@ -28,6 +28,11 @@ export default function Owner() {
 
   const { isLoading, venues, ownerData, deleteVenue } = useVenues(userId);
 
+  if(isLoading) {
+    return (<Layout>Loading...</Layout>)
+  }
+
+
   return (
     <Layout>
       <Text fontSize="xl" fontWeight="bold">

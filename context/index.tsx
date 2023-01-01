@@ -2,6 +2,7 @@ import { createContext, useContext, ReactNode, useState } from "react";
 import { Owner } from "../types/Owner";
 import { NFC } from "../types/NFC";
 import { Venue } from "../types/Venue";
+import { DeviceType } from "../types/DeviceType";
 
 interface IGloablContext {
   owners: Owner[];
@@ -25,7 +26,28 @@ interface IGloablContext {
 
   nfcs: NFC[];
   setNfcs: (arr: NFC[]) => void;
+
+  //Device Types
+  deviceTypes: DeviceType[];
+  setDeviceTypes: (val: DeviceType[]) => void;
+  deviceTypeData: DeviceType;
+  setDeviceTypeData: (val: DeviceType) => void;
+  activeDeviceTypeId: number | null;
+  setActiveDeviceTypeId: (val: number | null) => void;
+  isDeviceTypeDrawerOpen: boolean;
+  setIsDeviceTypeDrawerOpen: (val: boolean) => void;
+  loadingDeviceType: boolean;
+  setLoadingDeviceType: (val: boolean) => void;
+  loadingDeviceTypes: boolean;
+  setLoadingDeviceTypes: (val: boolean) => void;
 }
+
+const initialDeviceTypeData = {
+  title: "",
+  price: 100,
+  type: "Card",
+  image: "",
+};
 
 const initialState: IGloablContext = {
   owners: [],
@@ -46,6 +68,20 @@ const initialState: IGloablContext = {
   setActiveVenueId: () => {},
   nfcs: [],
   setNfcs: () => {},
+
+  //Device Types
+  deviceTypes: [],
+  setDeviceTypes: () => {},
+  deviceTypeData: initialDeviceTypeData,
+  setDeviceTypeData: () => {},
+  activeDeviceTypeId: null,
+  setActiveDeviceTypeId: () => {},
+  isDeviceTypeDrawerOpen: false,
+  setIsDeviceTypeDrawerOpen: () => {},
+  loadingDeviceType: false,
+  setLoadingDeviceType: () => {},
+  loadingDeviceTypes: false,
+  setLoadingDeviceTypes: () => {},
 };
 
 const globalContext = createContext(initialState);
@@ -64,6 +100,18 @@ export default function CombinedContext({ children }: { children: ReactNode }) {
   const [activeVenueId, setActiveVenueId] = useState<string | null>(null);
 
   const [nfcs, setNfcs] = useState<NFC[]>([]);
+
+  //Device Types State
+  const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
+  const [deviceTypeData, setDeviceTypeData] = useState<DeviceType>(
+    initialDeviceTypeData
+  );
+  const [activeDeviceTypeId, setActiveDeviceTypeId] = useState<number | null>(
+    null
+  );
+  const [isDeviceTypeDrawerOpen, setIsDeviceTypeDrawerOpen] = useState(false);
+  const [loadingDeviceType, setLoadingDeviceType] = useState(false);
+  const [loadingDeviceTypes, setLoadingDeviceTypes] = useState(false);
 
   return (
     <globalContext.Provider
@@ -86,6 +134,19 @@ export default function CombinedContext({ children }: { children: ReactNode }) {
         setIsVenueDrawerOpen,
         nfcs,
         setNfcs,
+
+        deviceTypes,
+        setDeviceTypes,
+        deviceTypeData,
+        setDeviceTypeData,
+        activeDeviceTypeId,
+        setActiveDeviceTypeId,
+        isDeviceTypeDrawerOpen,
+        setIsDeviceTypeDrawerOpen,
+        loadingDeviceType,
+        setLoadingDeviceType,
+        loadingDeviceTypes,
+        setLoadingDeviceTypes,
       }}
     >
       {children}
