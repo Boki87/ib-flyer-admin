@@ -20,12 +20,16 @@ import Layout from "../../../components/Layout";
 import { useGlobalState } from "../../../context";
 import supabase from "../../../lib/supabase";
 import { BsFillTrashFill, BsArrowUpRight } from "react-icons/bs";
+import NfcDrawer from "../../../components/NfcDrawer";
+import { NFC } from "../../../types/NFC";
 
 export default function Venues() {
   const router = useRouter();
   const userId = router.query.id;
   const { nfcs, setNfcs } = useGlobalState();
   const [isLoadingData, setIsLoadingData] = useState(false);
+
+  const [activeNfcId, setActiveNfcId] = useState<string | null>(null);
 
   async function fetchData() {
     try {
@@ -35,7 +39,9 @@ export default function Venues() {
         .from("nfcs")
         .select(
           `*, 
-            device_types (type, image, title)`
+            device_types (type, image, title),
+            venues (title, logo) 
+          `
         )
         .match({ owner_id: userId });
       console.log(nfcData);
@@ -48,6 +54,36 @@ export default function Venues() {
     }
   }
 
+  function updateList(nfc: NFC) {
+    console.log(nfc);
+
+    let newNfcs: NFC[] = [];
+    if (nfcs.find((n) => n.id === nfc.id)) {
+      newNfcs = nfcs.map((n) => {
+        if (n.id === nfc.id) {
+          return nfc;
+        } else {
+          return n;
+        }
+      });
+    } else {
+      newNfcs = [...nfcs, nfc];
+    }
+
+    setNfcs(newNfcs);
+  }
+
+  async function deleteNfc(id?: string) {
+    if (!id) return;
+    if (!window.confirm("Sure you want to delete this nfc?")) return;
+
+    const { data, error } = await supabase.from("nfcs").delete().match({ id });
+    if (error) return;
+
+    const newNfcs = nfcs.filter((n) => n.id !== id);
+    setNfcs(newNfcs);
+  }
+
   useEffect(() => {
     fetchData();
   }, [userId]);
@@ -57,7 +93,7 @@ export default function Venues() {
       <HStack>
         <Text>NFC's</Text>
         <Spacer />
-        <Button>ADD</Button>
+        <Button onClick={() => setActiveNfcId("new")}>ADD</Button>
       </HStack>
 
       <TableContainer w="full">
@@ -65,22 +101,24 @@ export default function Venues() {
           <Thead>
             <Tr>
               <Th>Ttile</Th>
-              <Th>UUID</Th>
+              <Th>Venues</Th>
               <Th w="100px"></Th>
             </Tr>
           </Thead>
           <Tbody>
             {nfcs.map((nfc) => (
               <Tr cursor="pointer" key={nfc.id}>
-                <Td _hover={{ textDecoration: "underline" }}>
-                  {nfc?.device_types?.title}
-                </Td>
-                <Td>{nfc.id}</Td>
+                <Td _hover={{ textDecoration: "underline" }}>{nfc?.title}</Td>
+                <Td>{nfc?.venues?.title}</Td>
                 <Td>
-                  <Button colorScheme="blue" mr="10px">
+                  <Button
+                    onClick={() => setActiveNfcId(nfc?.id || null)}
+                    colorScheme="blue"
+                    mr="10px"
+                  >
                     <BsArrowUpRight />
                   </Button>
-                  <Button colorScheme="red">
+                  <Button onClick={() => deleteNfc(nfc?.id)} colorScheme="red">
                     <BsFillTrashFill />
                   </Button>
                 </Td>
@@ -89,6 +127,12 @@ export default function Venues() {
           </Tbody>
         </Table>
       </TableContainer>
+      <NfcDrawer
+        activeNfcId={activeNfcId}
+        isOpen={!!activeNfcId}
+        onClose={() => setActiveNfcId(null)}
+        onUpdate={updateList}
+      />
     </Layout>
   );
 }

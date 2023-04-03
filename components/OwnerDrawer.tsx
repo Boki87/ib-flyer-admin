@@ -77,7 +77,7 @@ export default function OwnerDrawer() {
                       placeholder="email address"
                       disabled={!!ownerId}
                       onInput={updateOwnerState}
-                      value={ownerData.email}
+                      value={ownerData.email || ""}
                     />
                   </InputGroup>
                 </FormControl>
@@ -89,7 +89,7 @@ export default function OwnerDrawer() {
                       type="text"
                       placeholder="John Doe"
                       onInput={updateOwnerState}
-                      value={ownerData.full_name}
+                      value={ownerData.full_name || ""}
                     />
                   </InputGroup>
                 </FormControl>
@@ -101,7 +101,7 @@ export default function OwnerDrawer() {
                       type="text"
                       placeholder="Company Ltd"
                       onInput={updateOwnerState}
-                      value={ownerData.company_name}
+                      value={ownerData.company_name || ""}
                     />
                   </InputGroup>
                 </FormControl>
@@ -113,7 +113,7 @@ export default function OwnerDrawer() {
                       type="text"
                       placeholder="000 000 000"
                       onInput={updateOwnerState}
-                      value={ownerData.phone}
+                      value={ownerData.phone || ""}
                     />
                   </InputGroup>
                 </FormControl>

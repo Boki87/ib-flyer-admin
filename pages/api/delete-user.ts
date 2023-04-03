@@ -13,14 +13,15 @@ async function deleteUserRoute(req: NextApiRequest, res: NextApiResponse) {
 
   const { user_id, owner_id } = req.body;
 
-  const { data: owner, error: ownerError } = await supabaseNode
+  const { data: owner, error: ownerError } = await supabase
     .from("owners")
-    .update({ user_id: null, is_active: false });
-
+    .update({ user_id: null, is_active: false })
+    .match({ id: owner_id });
+  console.log(1, ownerError);
   const { data: user, error } = await supabaseNode.auth.admin.deleteUser(
     user_id
   );
-  
+  console.log(2, error);
   res.json({
     success: true,
     data: { user, owner },

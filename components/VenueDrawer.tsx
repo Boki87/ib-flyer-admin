@@ -93,7 +93,7 @@ export default function VenueDrawer() {
                       type="text"
                       placeholder="Title"
                       onInput={updateVenueState}
-                      value={venueData?.title}
+                      value={venueData?.title || ""}
                     />
                   </InputGroup>
                 </FormControl>
@@ -105,7 +105,7 @@ export default function VenueDrawer() {
                       type="text"
                       placeholder="www.website.com"
                       onInput={updateVenueState}
-                      value={venueData?.website}
+                      value={venueData?.website || ""}
                     />
                   </InputGroup>
                 </FormControl>
@@ -117,7 +117,7 @@ export default function VenueDrawer() {
                       type="text"
                       placeholder="000 000 000"
                       onInput={updateVenueState}
-                      value={venueData?.phone}
+                      value={venueData?.phone || ""}
                     />
                   </InputGroup>
                 </FormControl>

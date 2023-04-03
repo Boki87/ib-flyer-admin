@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SyntheticEvent } from "react";
 import { withIronSessionSsr } from "iron-session/next";
 import { sessionOptions } from "../lib/session";
 import Layout from "../components/Layout";
@@ -29,6 +29,9 @@ export default function Home() {
     setIsOwnerDrawerOpen,
     setActiveOwnerId,
   } = useGlobalState();
+
+  const [searchQ, setSearchQ] = useState("");
+  const [filteredOwners, setFilteredOwners] = useState(owners);
 
   const router = useRouter();
 
@@ -66,13 +69,34 @@ export default function Home() {
   }
 
   useEffect(() => {
+    if (searchQ !== "") {
+      const fOwners = owners.filter(
+        (o) =>
+          o.email?.toLocaleLowerCase().includes(searchQ.toLocaleLowerCase()) ||
+          o.full_name?.toLocaleLowerCase().includes(searchQ.toLocaleLowerCase())
+      );
+      setFilteredOwners(fOwners);
+    } else {
+      setFilteredOwners(owners);
+    }
+  }, [searchQ, owners]);
+
+  useEffect(() => {
     fetchOwners();
   }, []);
 
   return (
     <Layout>
       <HStack>
-        <Input placeholder="Search owner" />
+        <Input
+          type="search"
+          placeholder="Search owner"
+          value={searchQ}
+          onChange={(e: SyntheticEvent) => {
+            let { value } = e.target as HTMLInputElement;
+            setSearchQ(value);
+          }}
+        />
         <Button
           onClick={() => {
             setActiveOwnerId(null);
@@ -95,7 +119,7 @@ export default function Home() {
               </Tr>
             </Thead>
             <Tbody>
-              {owners.map((owner) => (
+              {filteredOwners.map((owner) => (
                 <Tr cursor="pointer" key={owner.id}>
                   <Td
                     _hover={{ textDecoration: "underline" }}

@@ -34,14 +34,24 @@ export default function Navigation() {
   }
 
   return (
-    <HStack h="60px" borderBottom="1px" borderColor="gray.200" position="fixed" top="0" left="0" zIndex={2} w="full" bg="white">
+    <HStack
+      h="60px"
+      borderBottom="1px"
+      borderColor="gray.200"
+      position="fixed"
+      top="0"
+      left="0"
+      zIndex={2}
+      w="full"
+      bg="white"
+    >
       <HStack maxW="6xl" w="full" mx="auto" px="20px">
         <HStack>
           <LinkItem href="/" activePath={router.asPath}>
             Owners
           </LinkItem>
           <LinkItem href="/devices" activePath={router.asPath}>
-            Devices
+            Device Types
           </LinkItem>
         </HStack>
         <Spacer />
