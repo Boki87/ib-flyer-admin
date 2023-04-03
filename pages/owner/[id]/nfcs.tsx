@@ -147,6 +147,11 @@ export default function Venues() {
           </Tbody>
         </Table>
       </TableContainer>
+      {nfcs.length === 0 ? (
+        <Text mt={4} textAlign="center">
+          No NFCs...
+        </Text>
+      ) : null}
       <NfcDrawer
         activeNfcId={activeNfcId}
         isOpen={!!activeNfcId}

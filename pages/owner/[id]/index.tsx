@@ -28,10 +28,9 @@ export default function Owner() {
 
   const { isLoading, venues, ownerData, deleteVenue } = useVenues(userId);
 
-  if(isLoading) {
-    return (<Layout>Loading...</Layout>)
+  if (isLoading) {
+    return <Layout>Loading...</Layout>;
   }
-
 
   return (
     <Layout>
@@ -123,6 +122,11 @@ export default function Owner() {
           </Tbody>
         </Table>
       </TableContainer>
+      {venues.length === 0 ? (
+        <Text mt="4" textAlign="center">
+          No venues...
+        </Text>
+      ) : null}
       <VenueDrawer />
     </Layout>
   );
