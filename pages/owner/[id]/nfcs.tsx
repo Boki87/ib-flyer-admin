@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import Layout from "../../../components/Layout";
 import { useGlobalState } from "../../../context";
 import supabase from "../../../lib/supabase";
-import { BsFillTrashFill, BsArrowUpRight } from "react-icons/bs";
+import { BsFillTrashFill, BsArrowUpRight, BsClipboard } from "react-icons/bs";
 import NfcDrawer from "../../../components/NfcDrawer";
 import { NFC } from "../../../types/NFC";
 
@@ -84,6 +84,19 @@ export default function Venues() {
     setNfcs(newNfcs);
   }
 
+  async function copyToClipboard(id?: string) {
+    if (!id) return;
+
+    const BASE_URL = `https://tapapp-supabase.vercel.app/d/`;
+
+    try {
+      await window.navigator.clipboard.writeText(`${BASE_URL}${id}`);
+      window.alert("Link copied to clipboard!");
+    } catch (e) {
+      window.alert("Could not copy to url, browser does not support");
+    }
+  }
+
   useEffect(() => {
     fetchData();
   }, [userId]);
@@ -111,6 +124,13 @@ export default function Venues() {
                 <Td _hover={{ textDecoration: "underline" }}>{nfc?.title}</Td>
                 <Td>{nfc?.venues?.title}</Td>
                 <Td>
+                  <Button
+                    onClick={() => copyToClipboard(nfc?.id)}
+                    colorScheme="blue"
+                    mr="10px"
+                  >
+                    <BsClipboard />
+                  </Button>
                   <Button
                     onClick={() => setActiveNfcId(nfc?.id || null)}
                     colorScheme="blue"
