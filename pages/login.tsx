@@ -27,7 +27,7 @@ export default function Login() {
 
   async function submitHandler(e: FormEvent) {
     e.preventDefault();
-    const { email, password } = e.currentTarget;
+    const { email, password } = e.currentTarget as HTMLFormElement;
     const loginReq = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-type": "application/json" },
