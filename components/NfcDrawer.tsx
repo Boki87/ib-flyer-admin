@@ -133,6 +133,7 @@ export default function NfcDrawer({
         `
         )
         .single();
+      console.log(data, error);
       onUpdate && onUpdate(data);
     } else {
       const { data, error } = await supabase

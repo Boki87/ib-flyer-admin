@@ -2,8 +2,8 @@ import { IronSessionOptions } from "iron-session";
 import { User } from "../types/User";
 
 export const sessionOptions: IronSessionOptions = {
-  password: "tapappsecretcookiepassword123dsfasfsfqwerqwrqwrfsdfsadfsreqw",
-  cookieName: "tappapp-login-cookie",
+  password: "ibflyersecretcookiepassword123dsfasfsfqwerqwrqwrfsdfsadfsreqw",
+  cookieName: "ib-flyer-cookie",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
   },
