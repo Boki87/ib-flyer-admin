@@ -41,7 +41,7 @@ export default function Venues() {
           `*, 
             device_types (type, image, title),
             venues (title, logo) 
-          `
+          `,
         )
         .match({ owner_id: userId });
       console.log(nfcData);
@@ -87,7 +87,7 @@ export default function Venues() {
   async function copyToClipboard(id?: string) {
     if (!id) return;
 
-    const BASE_URL = `https://tapapp-supabase.vercel.app/d/`;
+    const BASE_URL = `https://ib-tourism.vercel.app/d/`;
 
     try {
       await window.navigator.clipboard.writeText(`${BASE_URL}${id}`);
