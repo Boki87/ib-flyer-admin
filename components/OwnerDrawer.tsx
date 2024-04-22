@@ -14,11 +14,15 @@ import {
   InputGroup,
   FormLabel,
   Spinner,
+  Box,
 } from "@chakra-ui/react";
 import { useGlobalState } from "../context";
 import { useOwner } from "../hooks/useOwner";
+import supabase from "../lib/supabase";
 
 export default function OwnerDrawer() {
+  const [resetingPassword, setResetingPassword] = useState(false);
+
   const {
     activeOwnerId: ownerId,
     setActiveOwnerId,
@@ -49,6 +53,24 @@ export default function OwnerDrawer() {
   function updateOwnerState(e: SyntheticEvent) {
     const input = e.target as HTMLInputElement;
     setOwnerData({ ...ownerData, [input.name]: input.value });
+  }
+
+  async function resetPassowrdHandler() {
+    setResetingPassword(true);
+    try {
+      await fetch("/api/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: ownerId }),
+      });
+    } catch (e) {
+      console.log(e);
+      setResetingPassword(false);
+    } finally {
+      setResetingPassword(false);
+    }
   }
 
   return (
@@ -117,6 +139,15 @@ export default function OwnerDrawer() {
                     />
                   </InputGroup>
                 </FormControl>
+
+                <Box>
+                  <Button
+                    onClick={resetPassowrdHandler}
+                    isLoading={resetingPassword}
+                  >
+                    RESET PASSWORD
+                  </Button>
+                </Box>
               </DrawerBody>
 
               <DrawerFooter>
